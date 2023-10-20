@@ -14,10 +14,17 @@ namespace AesCodec.Classes {
 
         public Codec(byte[] textBytes, byte[] password) {
             this.TextBytes = textBytes;
+
+            int count = password.Length;
+
+            if (count < 32) {
+                Array.Resize(ref password, 32);
+            }
+
             this.Password = password;
 
-            byte[] iv = new byte[16];  // 16-byte initialization vector
-            new Random().NextBytes(iv);
+            byte[] iv = new byte[16] {0, 1 ,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};  // 16-byte initialization vector
+            // new Random().NextBytes(iv);
 
             this.Iv = iv;
         }  
@@ -45,6 +52,19 @@ namespace AesCodec.Classes {
 
         public string Decode() {
             byte[] decodedBytes = null;
+            byte[] encodedBytes = null;
+
+            using (Aes aesInput = Aes.Create()) {
+                aesInput.Key = this.Password;
+                aesInput.IV = this.Iv;
+                aesInput.Mode = CipherMode.CBC;
+                aesInput.Padding = PaddingMode.PKCS7;
+
+                // Encrypt the input plaintext using the AES algorithm
+                using (ICryptoTransform encryptor = aesInput.CreateEncryptor()) {
+                    encodedBytes = encryptor.TransformFinalBlock(this.TextBytes, 0, TextBytes.Length);
+                }
+            }
 
             // Set up the encryption objects
             using (Aes aes = Aes.Create()) {
@@ -55,7 +75,7 @@ namespace AesCodec.Classes {
 
                 // Decrypt the input ciphertext using the AES algorithm
                 using (ICryptoTransform decryptor = aes.CreateDecryptor()) {
-                    decodedBytes = decryptor.TransformFinalBlock(this.TextBytes, 0, this.TextBytes.Length);
+                    decodedBytes = decryptor.TransformFinalBlock(encodedBytes, 0, encodedBytes.Length);
                 }
             }
 
