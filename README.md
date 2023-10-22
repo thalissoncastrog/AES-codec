@@ -2,8 +2,7 @@
 Aplicação para criptografar e descriptografar um arquivo usando a cifra AES no modo CBC.
 
 Para executa-la basta fazer o download do framework .NET para windows, mac ou linux no link abaixo.
-
-<https://dotnet.microsoft.com/pt-br/download>
+<a href="https://dotnet.microsoft.com/pt-br/download" target="_blank">Dotnet CLI Download</a>
 
 Em seguida abra a pasta do projeto
 ![project folder](/images/projectFolder.png)
