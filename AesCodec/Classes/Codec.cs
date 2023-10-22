@@ -23,8 +23,9 @@ namespace AesCodec.Classes {
 
             this.Password = password;
 
+            //byte[] iv = new byte[16];  // 16-byte initialization vector
+            //new Random().NextBytes(iv);
             byte[] iv = new byte[16] {0, 1 ,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};  // 16-byte initialization vector
-            // new Random().NextBytes(iv);
 
             this.Iv = iv;
         }  
@@ -32,12 +33,14 @@ namespace AesCodec.Classes {
         public string Encode() {
             byte[] encodedBytes = null;
 
-            // Set up the encryption objects
+            //Set up the encryption objects
             using (Aes aes = Aes.Create()) {
                 aes.Key = this.Password;
                 aes.IV = this.Iv;
                 aes.Mode = CipherMode.CBC;
                 aes.Padding = PaddingMode.PKCS7;
+
+
 
                 // Encrypt the input plaintext using the AES algorithm
                 using (ICryptoTransform encryptor = aes.CreateEncryptor()) {
@@ -54,18 +57,6 @@ namespace AesCodec.Classes {
             byte[] decodedBytes = null;
             byte[] encodedBytes = null;
 
-            using (Aes aesInput = Aes.Create()) {
-                aesInput.Key = this.Password;
-                aesInput.IV = this.Iv;
-                aesInput.Mode = CipherMode.CBC;
-                aesInput.Padding = PaddingMode.PKCS7;
-
-                // Encrypt the input plaintext using the AES algorithm
-                using (ICryptoTransform encryptor = aesInput.CreateEncryptor()) {
-                    encodedBytes = encryptor.TransformFinalBlock(this.TextBytes, 0, TextBytes.Length);
-                }
-            }
-
             // Set up the encryption objects
             using (Aes aes = Aes.Create()) {
                 aes.Key = this.Password;
@@ -75,7 +66,7 @@ namespace AesCodec.Classes {
 
                 // Decrypt the input ciphertext using the AES algorithm
                 using (ICryptoTransform decryptor = aes.CreateDecryptor()) {
-                    decodedBytes = decryptor.TransformFinalBlock(encodedBytes, 0, encodedBytes.Length);
+                    decodedBytes = decryptor.TransformFinalBlock(this.TextBytes, 0, this.TextBytes.Length);
                 }
             }
 

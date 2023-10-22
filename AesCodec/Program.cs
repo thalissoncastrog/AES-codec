@@ -1,4 +1,5 @@
 ﻿using AesCodec.Classes;
+using System.Security.Cryptography;
 using System.Text;
 
 string password = null;
@@ -47,7 +48,9 @@ switch (option) {
     case "1":
         AesCodec.Classes.File encodedFile = new AesCodec.Classes.File(@filePath);
         string encodeText = encodedFile.ReadFile();
-        byte[] utfEncodedText = Encoding.UTF8.GetBytes(encodeText);
+
+
+        byte[] utfEncodedText = Convert.FromBase64String(encodeText);
 
         Console.WriteLine("Insira a senha para descriptografar:");
         password = Console.ReadLine();
